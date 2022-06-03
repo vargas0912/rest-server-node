@@ -4,7 +4,15 @@ const { check } = require('express-validator');
 
 const { usersGet, usersPut, usersPost, usersDelete, usersPatch } = require('../controllers/users');
 const { validRole, emailExists, findUserById } = require('../helpers/db-validators');
-const { validate } = require('../middlewares/validateUser');
+
+const {
+    validate,
+    validateJWT,
+    isAdminRole,
+    includeRole
+} = require('../middlewares');
+
+
 
 const router = Router();
 
@@ -28,7 +36,10 @@ router.post('/', [
     validate
 ],usersPost);
 
-router.delete('/:id',[
+router.delete('/:id',[    
+    validateJWT,    
+    //isAdminRole, //! Fuerza a que el role sea Admin...
+    includeRole('Admin', 'Ventas'),
     check('id', 'Id is invalid').isMongoId(),
     check('id').custom(findUserById),
     validate

@@ -10,6 +10,8 @@ class Server {
 
         this.usersPath = '/api/users';
 
+        this.authPath = '/api/auth'
+
         this.dbConnect();
 
         //middlewares
@@ -32,9 +34,9 @@ class Server {
 
 
     routes() {
-        this.app.use( this.usersPath, require('../routes/user')) 
 
-       
+        this.app.use( this.authPath, require('../routes/auth')) 
+        this.app.use( this.usersPath, require('../routes/user'))        
     }
 
     listen() {

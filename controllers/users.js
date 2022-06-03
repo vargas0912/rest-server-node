@@ -2,6 +2,7 @@ const { response, request } = require('express');
 const bcryptjs = require('bcryptjs');
 
 const User = require('../models/user');
+
 const bcrypt = require('bcryptjs/dist/bcrypt');
 
 //* Get paginado
@@ -60,14 +61,13 @@ const usersPost = async (req, res = response) => {
 
 const usersDelete = async(req, res = response) => {
     const { id } = req.params;  
-    ////const user = await User.findByIdAndDelete( id );
 
-    //* Simuladno el borrado logico
+    //* Simulando el borrado logico
     const user = await User.findByIdAndUpdate(id, {status: false});
 
-    res.json({                
-        user
-    })
+    ////const userAuth = req.user;
+
+    res.json(user)
 }
 
 const usersPatch = (_req, res = response) => {
