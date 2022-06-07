@@ -1,8 +1,8 @@
 
 const { Router } = require('express');
 const { check } = require('express-validator');
-const { addProduct, getProducts, getProduct } = require('../controllers/product');
-const { findProductById } = require('../helpers/db-validators');
+const { addProduct, getProducts, getProduct, modifyProduct, deleteProduct } = require('../controllers/product');
+const { findProductById, productExists } = require('../helpers/db-validators');
 
 const { validateJWT, validate, isAdminRole } = require('../middlewares');
 
@@ -20,24 +20,30 @@ router.get('/:id', [
     validate
 ], getProduct);
 
-router.put('/:id', (req, res) => {
-    return res.json({
-        msg: "put route"
-    })
-});
+router.put('/:id', [
+    validateJWT,
+    check('id', 'Id is invalid').isMongoId(),
+    check('id').custom( findProductById ),
+    check('name').custom( productExists ),
+    validate
+], modifyProduct);
 
 router.post('/', [
     validateJWT,
     check('name', 'Name is required').not().isEmpty(),   
+    check('name').custom( productExists ),
     check('category', 'Category is invalid').isMongoId(), 
     validate
 ], addProduct);
 
-router.delete('/:id', (req, res) => {
-    return res.json({
-        msg: "delete route"
-    })
-});
+router.delete('/:id', [
+    validateJWT,    
+    isAdminRole, //! Fuerza a que el role sea Admin...
+    // includeRole('Admin', 'Ventas'),
+    check('id', 'Id is invalid').isMongoId(),
+    check('id').custom(findProductById),
+    validate
+], deleteProduct);
 
 
 

@@ -1,4 +1,5 @@
 const { request, response } = require("express");
+const { findCategoryById } = require("../helpers/db-validators");
 
 const { Product, Category } = require('../models');
 
@@ -56,7 +57,7 @@ const addProduct = async (req= request, res = response) => {
             msg: 'Category not exists'
         })
     }
-    
+
     // No esiste, seguimos    
     const data = {
         name,         
@@ -77,8 +78,42 @@ const addProduct = async (req= request, res = response) => {
     })
 }
 
+const modifyProduct = async (req = request, res = response ) => {
+
+    const { id } = req.params;  
+
+    //* Evitar que se modifique status y user
+    const { status, user, ...rest} = req.body;
+
+    rest.name = rest.name.toUpperCase();
+
+    //* Actualizar el user que ha modificado el dato
+    rest.user = req.user._id;
+
+    const product = await Product.findByIdAndUpdate(id, rest, {new: true});
+
+    res.status(200).json({
+        product
+    })
+}
+
+const deleteProduct = async (req = request, res = response ) => {
+
+    const { id } = req.params;  
+ 
+    //* Simulando el borrado logico
+    const product = await Product.findByIdAndUpdate(id, {status: false}, {new: true});
+
+    ////const userAuth = req.user;
+
+    res.status(200).json(product)
+}
+
+
 module.exports = {
     addProduct, 
+    deleteProduct,
     getProducts,
-    getProduct
+    getProduct,
+    modifyProduct
 }

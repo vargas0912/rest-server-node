@@ -47,11 +47,21 @@ const findProductById = async(id) => {
     }
 } 
 
-const categoryExists = async(name = '') => {
+const categoryExists = async(value = '') => {
+    const name = value.toUpperCase();
+
     const  categoryexists  = await Category.findOne({ name });
 
     if (categoryexists) { 
         throw new Error(`The category ${ name } already exists`);
+    }
+} 
+
+const productExists = async(name = '') => {
+    const  productexists  = await Product.findOne({ name });
+    
+    if (productexists) { 
+        throw new Error(`The product ${ name } already exists`);
     }
 } 
 
@@ -62,5 +72,6 @@ module.exports = {
     findUserById,
     findCategoryById,
     findProductById,
+    productExists,
     validRole
 }
