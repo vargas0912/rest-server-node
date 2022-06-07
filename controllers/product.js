@@ -1,5 +1,4 @@
 const { request, response } = require("express");
-const { findCategoryById } = require("../helpers/db-validators");
 
 const { Product, Category } = require('../models');
 
@@ -9,7 +8,9 @@ const getProduct = async ( req = request, res = response ) => {
     const { id } = req.params;
 
     // ? Verificar si se requiere incluir el nombre del usuario relacionado
-    const product = await Product.findById(id).populate('user', 'name').populate('category', 'name');    
+    const product = await Product.findById(id)
+                            .populate('user', 'name')
+                            .populate('category', 'name');    
 
     res.json({
         product
@@ -36,9 +37,11 @@ const getProducts = async (req = request, res = response) => {
 
     res.json({ total, products })
 }
-
+ 
 
 const addProduct = async (req= request, res = response) => {
+    const { status, user,  ...body} = req.body;
+
     const name = req.body.name.toUpperCase();
     const idCategory = req.body.category;
 
@@ -59,18 +62,24 @@ const addProduct = async (req= request, res = response) => {
     }
 
     // No esiste, seguimos    
+    // const data = {
+    //     name,         
+    //     user: req.user._id ,
+    //     price: req.body.price,
+    //     category: category._id,
+    //     description: req.body.description,        
+    // };
+
     const data = {
-        name,         
-        user: req.user._id ,
-        price: req.body.price,
-        category: category._id,
-        description: req.body.description,        
-    };
+        ...body,
+        nombre: body.name.toUpperCase(),
+        user: req.user._id
+    }
      
     const newProduct = new Product( data );
 
     //Guardar
-    newProduct.save();
+    await newProduct.save();
 
     //Devolver objeto guardado
     res.status(200).json({
@@ -85,7 +94,7 @@ const modifyProduct = async (req = request, res = response ) => {
     //* Evitar que se modifique status y user
     const { status, user, ...rest} = req.body;
 
-    rest.name = rest.name.toUpperCase();
+    //rest.name = rest.name.toUpperCase();
 
     //* Actualizar el user que ha modificado el dato
     rest.user = req.user._id;

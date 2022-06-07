@@ -1,8 +1,16 @@
 
 const { Router } = require('express');
 const { check } = require('express-validator');
-const { addProduct, getProducts, getProduct, modifyProduct, deleteProduct } = require('../controllers/product');
-const { findProductById, productExists } = require('../helpers/db-validators');
+
+const { 
+    addProduct, 
+    getProducts, 
+    getProduct, 
+    modifyProduct, 
+    deleteProduct
+} = require('../controllers/product');
+
+const { findProductById, productExists, findCategoryById } = require('../helpers/db-validators');
 
 const { validateJWT, validate, isAdminRole } = require('../middlewares');
 
@@ -22,9 +30,11 @@ router.get('/:id', [
 
 router.put('/:id', [
     validateJWT,
-    check('id', 'Id is invalid').isMongoId(),
+    check('id', 'Id is invalid').isMongoId(),    
     check('id').custom( findProductById ),
     check('name').custom( productExists ),
+    check('category', 'Category is invalid').isMongoId(), 
+    check('category').custom( findCategoryById ),
     validate
 ], modifyProduct);
 
@@ -33,6 +43,7 @@ router.post('/', [
     check('name', 'Name is required').not().isEmpty(),   
     check('name').custom( productExists ),
     check('category', 'Category is invalid').isMongoId(), 
+    check('category').custom( findCategoryById ),
     validate
 ], addProduct);
 
