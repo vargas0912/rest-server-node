@@ -1,5 +1,5 @@
 
-const { Category, Role, User } = require('../models');
+const { Category, Role, User, Product } = require('../models');
 // const Role = require('../models/role');
 // const User = require('../models/user');
 
@@ -39,6 +39,14 @@ const findCategoryById = async(id) => {
     }
 } 
 
+const findProductById = async(id) => {
+    const  existsId  = await Product.findById(id);
+
+    if (!existsId) { 
+        throw new Error(`The id ${ id } not exists`);
+    }
+} 
+
 const categoryExists = async(name = '') => {
     const  categoryexists  = await Category.findOne({ name });
 
@@ -49,9 +57,10 @@ const categoryExists = async(name = '') => {
 
 
 module.exports = {
-    validRole,
+    categoryExists,
     emailExists, 
     findUserById,
     findCategoryById,
-    categoryExists
+    findProductById,
+    validRole
 }

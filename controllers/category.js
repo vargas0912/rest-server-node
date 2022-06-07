@@ -1,21 +1,16 @@
 const { request, response } = require("express");
 const { Category } = require("../models");
-const { aggregate, populate } = require("../models/user");
-
-
 
 const getCategory = async ( req = request, res = response ) => {
 
     const { id } = req.params;
 
-    const category = await Category.findById(id).populate('user', 'name');
-
-    
+    // ? Verificar si se requiere incluir el nombre del usuario relacionado
+    const category = await Category.findById(id).populate('user', 'name');    
 
     res.json({
         category
     })
-
    
 }
 
@@ -29,7 +24,7 @@ const getCategories = async (req = request, res = response) => {
         [
             Category.countDocuments(status),            
             Category.find(status)   
-                .populate('user', 'name')             
+                .populate('user', 'name')       //! Agregar el user relacionado (name)      
                 .skip(Number( from ))
                 .limit(Number( limit ))
         ]
@@ -70,9 +65,13 @@ const addCategory = async (req= request, res = response) => {
 const modifyCategory = async (req = request, res = response ) => {
 
     const { id } = req.params;  
+
+    //* Evitar que se modifique status y user
     const { status, user, ...rest} = req.body;
 
     rest.name = rest.name.toUpperCase();
+
+    //* Actualizar el user que ha modificado el dato
     rest.user = req.user._id;
 
     const category = await Category.findByIdAndUpdate(id, rest, {new: true});
