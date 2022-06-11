@@ -2,7 +2,6 @@ const { request, response } = require("express");
 const { ObjectId } = require("mongoose").Types;
 
 const { User, Category, Product } = require('../models');
-const { $where } = require("../models/category");
 
 const allowedCollections = [
     "categories",
@@ -37,6 +36,8 @@ const searchUsers = async ( query = '', res = response) => {
 
 const searchCategories = async (query = '', res = response) => {
     const isMongoId = ObjectId.isValid( query );
+
+    console.log({valor: isMongoId, query: query});
 
     if (isMongoId){
         const category = await Category.findById(query);
@@ -80,19 +81,47 @@ const searchProducts = async (query = '', res = response) => {
 
 }
 
-const searchProductsByCategory = async (query = '', res = response) => {
-    const isMongoId = ObjectId.isValid( query );
 
+const searchProductsByCategory = async (category = '', res = response) => {
+    let mongoId = 'Hola';
+    const isMongoId = ObjectId.isValid( category ); 
+    
     if (isMongoId){
-        const product = await Product.find( {
-            category: ObjectId(query),
-            status: true
-        } ).populate('category', 'name');
+        mongoId = category;
+        // const product = await Product.find( {
+        //     category: ObjectId(category),
+        //     status: true
+        // } ).populate('category', 'name');
 
-        return res.json({
-            results: (product) ? [ product ] : []
-        })
+        // return res.json({
+        //     resultados: (product) ? [ product ] : []
+        // })
     }
+    else{
+
+        const name = category.toUpperCase();
+    
+        const categoryBd = await Category.findOne({ name });
+    
+        if (!categoryBd){
+            return res.status(400).json({
+                msg: 'Category  incorrect'
+            });
+        }
+
+        mongoId = category._id;
+    }
+
+        console.log(mongoId);
+
+    const products = await Product.find( {
+        category: ObjectId(mongoId),
+        status: true
+    } ).populate('category', 'name');
+
+    return res.json({
+        results: (products) ? [ products ] : []
+    })
 }
 
 
