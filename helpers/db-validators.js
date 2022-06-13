@@ -65,8 +65,25 @@ const productExists = async(name = '') => {
     }
 } 
 
+/**
+ * Validate allowed collections
+ * @param {string} collection param collection
+ * @param {array} collections list allowed collections
+ * @returns boolean
+ */
+const allowedCollections = (collection = '', collections = []) =>{
+    const included = collections.includes( collection ) ;
+
+    if ( !included ) {
+        throw new Error(`Collection '${ collection }' is not allowed. Use [${ collections }]` );
+    }
+
+    return true;
+}
+
 
 module.exports = {
+    allowedCollections,
     categoryExists,
     emailExists, 
     findUserById,
