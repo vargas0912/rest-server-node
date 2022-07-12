@@ -10,21 +10,21 @@ class Server {
         this.app = express();
         this.port = process.env.PORT;
 
-        this.paths = ({
-            users:      '/api/users',
-            auth:       '/api/auth',
-            categories: '/api/categories',
-            products:   '/api/products',
-            search:     '/api/search',
-            uploads:    '/api/uploads'
-        });
+        // this.paths = ({
+        //     users:      '/api/users',
+        //     auth:       '/api/auth',
+        //     categories: '/api/categories',
+        //     products:   '/api/products',
+        //     search:     '/api/search',
+        //     uploads:    '/api/uploads'
+        // });
 
         this.dbConnect();
 
         //middlewares
         this.middlewares();
 
-        this.routes();
+        //this.routes();
     }
 
     async dbConnect() {
@@ -43,20 +43,23 @@ class Server {
             tempFileDir : '/tmp/',
             createParentPath: true 
         }));
+
+        //* Invocar rutas. "./routes" va sobre el index.js que recorre la coleccion de rutas (archivos)
+        this.app.use("/api", require("../routes"))
     }
     
 
 
-    routes() {
+    // routes() {
 
-        this.app.use( this.paths.auth, require('../routes/auth')) 
-        this.app.use( this.paths.categories, require('../routes/category'))        
-        this.app.use( this.paths.products, require('../routes/product'))
-        this.app.use( this.paths.search, require('../routes/search'))
-        this.app.use( this.paths.users, require('../routes/user'))        
-        this.app.use( this.paths.uploads, require('../routes/upload'))        
+    //     this.app.use( this.paths.auth, require('../routes/auth')) 
+    //     this.app.use( this.paths.categories, require('../routes/category'))        
+    //     this.app.use( this.paths.products, require('../routes/product'))
+    //     this.app.use( this.paths.search, require('../routes/search'))
+    //     this.app.use( this.paths.users, require('../routes/users'))        
+    //     this.app.use( this.paths.uploads, require('../routes/upload'))        
         
-    }
+    // }
 
     listen() {
         this.app.listen(this.port, () => {
