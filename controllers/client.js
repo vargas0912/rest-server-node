@@ -4,7 +4,7 @@ const { Client }            = require("../models");
 
 const getClients = async (req = request, res = response) => {
 
-    const {limit = 1000, from = 0}  = req.query;
+    const {limit = 500, from = 0}  = req.query;
     //const status = {status: true} 
 
     const [ total, data ] = await Promise.all(
