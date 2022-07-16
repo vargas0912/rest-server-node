@@ -9,7 +9,7 @@ const StateSchema = Schema(
         },
         name: {
             type: String,
-            required: [true, 'The name is required']
+            require: [true, 'The name is required']
         }
     },
     {
