@@ -11,7 +11,7 @@ const CitySchema = Schema(
             type: String,
             required: [true, 'The name is required']
         },
-        id_state : {
+        idEstado : {
             type: Number,
             require: [true, 'Id state is required']
         }

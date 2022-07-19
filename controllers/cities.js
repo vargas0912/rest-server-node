@@ -21,12 +21,29 @@ const getCities = async (req = request, res = response) => {
     res.json({ total, cities })
 }
 
-const getCitisByState = async ( req = request, res = response ) => {
+const getCitiesByState = async ( req = request, res = response ) => {
 
-    const { id_state } = req.params;    
+    const { idEstado } = req.params;    
     
-    const cities = await City.find({id_state});
+    console.log(req.params);  
 
+    const cities = await City.find({idEstado});
+
+    res.json({
+        cities
+    })
+   
+}
+
+const searchCities = async ( req = request, res = response ) => {
+
+    const { idEstado, q } = req.params; 
+    const regex = new RegExp( q , 'i');           
+
+    const cities = await City.find({
+        $and: [{ name: regex }, { idEstado }]
+    });
+    
     res.json({
         cities
     })
@@ -36,5 +53,6 @@ const getCitisByState = async ( req = request, res = response ) => {
 
 module.exports = { 
     getCities,
-    getCitisByState
+    getCitiesByState,
+    searchCities
 }
